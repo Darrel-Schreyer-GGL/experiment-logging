@@ -6,10 +6,10 @@ namespace WebApi.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
+    private static readonly string[] Summaries =
+    [
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    ];
 
     private readonly ILogger<WeatherForecastController> _logger;
 
@@ -21,29 +21,30 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
-        // I want to log the WeatherLog
-        var weatherLog = new WeatherLog
+        var temperatureC = Random.Shared.Next(-20, 55);
+
+        var weatherLog = new WeatherEvent
         {
-            MethodName = "GetWeatherForecast"
+            TemperatureC = temperatureC
         };
 
         _logger.LogInformation(
             "Weather forecast requested | Category: {Category} | Object: {@WeatherLog}",
-            nameof(WeatherLog),
+            nameof(WeatherEvent),
             weatherLog
         );
 
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
+            TemperatureC = temperatureC,
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
         })
         .ToArray();
     }
 }
 
-public class WeatherLog
+public class WeatherEvent
 {
-    public string MethodName { get; set; }
+    public int TemperatureC { get; set; }
 }
